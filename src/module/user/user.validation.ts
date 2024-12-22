@@ -1,10 +1,25 @@
 import { z } from 'zod';
 
-const updateUser = z.object({
-  body: z.object({
-    name: z.string().optional(),
-    email: z.string().email('Invalid email format').optional(),
-  }),
-});
+const userValidationSchema = z.object({
+   body: z.object({
+    name: z.string({
+        required_error: "Name must be provided and must be a string",
+    }).min(3).max(50),
 
-export default { updateUser };
+    email: z.string({
+        required_error: "Email must be provided and must be a string",
+    }).email(),
+
+    password: z
+    .string({
+      required_error: 'Password is required for your safety',
+    })
+    .max(20, { message: 'Password can not be more than 20 characters' }),
+
+
+   })
+})
+
+export const UserValidation = {
+    userValidationSchema
+}

@@ -1,18 +1,14 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-const register = z.object({
+const loginValidationSchema = z.object({
   body: z.object({
-    name: z.string().nonempty('Name is required'),
-    email: z.string().email('Invalid email format'),
-    password: z.string().min(6, 'Password must be at least 6 characters long'),
+    email: z.string({
+      required_error: "Email must be provided and must be a string",
+  }).email(),
+    password: z.string({ required_error: 'Password is required' }),
   }),
-});
+})
 
-const login = z.object({
-  body: z.object({
-    email: z.string().email('Invalid email format'),
-    password: z.string().nonempty('Password is required'),
-  }),
-});
-
-export default { register, login };
+export const AuthValidation = {
+  loginValidationSchema,
+}

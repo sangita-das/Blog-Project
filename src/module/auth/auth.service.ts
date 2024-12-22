@@ -1,36 +1,50 @@
-import bcrypt from 'bcryptjs';
-import ApiError from '../../utils/ApiError';
-import { StatusCodes } from 'http-status-codes';
-import User from '../user/user.model';
+import { IUser } from '../user/user.interface'
+import User from '../user/user.model'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
-export default class AuthService {
-  static async register(userData: { email: string; password: string; name: string }) {
-    const { email, password, name } = userData;
+const register = async (payload: IUser) => {
+  const result = await User.create(payload)
+  return result
+}
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      throw new ApiError(StatusCodes.CONFLICT, 'Email is already in use');
-    }
+const login = async (payload: { email: string; password: string }) => {
+  // checking if the user is exist
+  const user = await User.findOne({ email: payload?.email }).select('+password');
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ email, password: hashedPassword, name });
-    await user.save();
-
-    return user;
+  if (!user) {
+    throw new Error('This user is not found !')
   }
 
-  static async login(email: string, password: string) {
-    const user = await User.findOne({ email });
-    if (!user) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid credentials');
-    }
+/*   // checking if the user is inactive
+  const isBlocked = user?.isBlocked
 
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
-    if (!isPasswordMatch) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid credentials');
-    }
+  if (isBlocked === 'true') {
+    throw new Error('This user is blocked ! !')
+  } */
 
-    // Add JWT token generation logic here if needed
-    return { token: 'dummy-token' }; // Replace with actual token logic
+  //checking if the password is correct
+  const isPasswordMatched = await bcrypt.compare(
+    payload?.password,
+    user?.password
+  )
+
+  if (!isPasswordMatched) {
+    throw new Error('Wrong Password!!! Tell me who are you? 😈')
   }
+
+  //create token and sent to the  client
+  const jwtPayload = {
+    email: user?.email,
+    role: user?.role,
+  }
+
+  const token = jwt.sign(jwtPayload, "secret", { expiresIn: '1d' });
+
+  return {token, user};
+}
+
+export const AuthService = {
+  register,
+  login,
 }

@@ -1,40 +1,103 @@
-import { Request, Response } from 'express';
-import catchAsync from '../../utils/catchAsync';
-import BlogService from './blog.service';
+import { Request, Response } from 'express'
+import {blogService} from './blog.service';
 
-const createBlog = catchAsync(async (req: Request, res: Response) => {
-  const blog = await BlogService.createBlog(req.body, req.user?.id);
-  res.status(201).json({
-    success: true,
-    message: 'Blog created successfully',
-    data: blog,
-  });
-});
+const createBlog = async (req: Request, res: Response) => {
+  
+  try {
+    const result = await blogService.createBlog(req.body, req.user?.id)
 
-const updateBlog = catchAsync(async (req: Request, res: Response) => {
-  const blog = await BlogService.updateBlog(req.params.id, req.body, req.user?.id);
-  res.status(200).json({
-    success: true,
-    message: 'Blog updated successfully',
-    data: blog,
-  });
-});
+    res.send({
+      success: true,
+      message: 'Blog created successfully',
+      result,
+    })
+  } catch (error) {
+    res.send({
+      success: false,
+      message: 'Something went wrong',
+      error,
+    })
+  }
+}
 
-const deleteBlog = catchAsync(async (req: Request, res: Response) => {
-  await BlogService.deleteBlog(req.params.id, req.user?.id);
-  res.status(200).json({
-    success: true,
-    message: 'Blog deleted successfully',
-  });
-});
+const getBlogs = async (req: Request, res: Response) => {
+  try {
+    const result = await blogService.getBlogs(req.query)
 
-const getAllBlogs = catchAsync(async (req: Request, res: Response) => {
-  const blogs = await BlogService.getAllBlogs(req.query);
-  res.status(200).json({
-    success: true,
-    message: 'Blogs fetched successfully',
-    data: blogs,
-  });
-});
+    res.send({
+      success: true,
+      message: 'Blogs fetched successfully',
+      result,
+    })
+  } catch (error) {
+    res.send({
+      success: false,
+      message: 'Something went wrong',
+      error,
+    })
+  }
+}
 
-export default { createBlog, updateBlog, deleteBlog, getAllBlogs };
+const getSingleBlog = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id
+    const result = await blogService.getSingleBlog(id)
+
+    res.send({
+      success: true,
+      message: 'Blog get successfully',
+      result,
+    })
+  } catch (error) {
+    res.send({
+      success: false,
+      message: 'Something went wrong',
+      error,
+    })
+  }
+}
+
+const updateBlog = async (req: Request, res: Response) => {
+  try {
+    const result = await blogService.updateBlog(req.params.id, req.body, req.user?.id)
+
+    res.send({
+      success: true,
+      message: 'Blog updated successfully',
+      result,
+    })
+  } catch (error) {
+    res.send({
+      success: false,
+      message: 'Something went wrong',
+      error,
+    })
+  }
+}
+const deleteBlog = async (req: Request, res: Response) => {
+  try {
+    const result = await blogService.deleteBlog(req.params.id, req.user?.id)
+
+    res.send({
+      success: true,
+      message: 'Blog deleted successfully',
+      result,
+    })
+  } catch (error) {
+    res.send({
+      success: false,
+      message: 'Something went wrong',
+      error,
+    })
+  }
+}
+
+
+export const blogController = {
+  createBlog,
+  getBlogs,
+  getSingleBlog,
+  updateBlog,
+  deleteBlog,
+  
+}

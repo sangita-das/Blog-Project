@@ -2,9 +2,9 @@
 import express from 'express';
 import AdminController from './admin.controller';
 
-const router = express.Router();
+const adminRouter = express.Router();
 
-router.get('/:id', AdminController.getAdminById);
-router.post('/', AdminController.createAdmin);
+adminRouter.get('/:id', AdminController.getAdminById);
+adminRouter.post('/', AdminController.createAdmin);
 
-export default router;
+export default adminRouter;

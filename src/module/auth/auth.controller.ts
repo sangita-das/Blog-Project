@@ -1,15 +1,35 @@
-import { Request, Response } from 'express';
-import AuthService from './auth.service';
+import { Request, Response } from "express";
+import catchAsync from "../../utils/catchAsync";
+import { AuthService } from "./auth.service";
+import sendResponse from "../../utils/sendResponse";
+import { StatusCodes } from "http-status-codes";
 
-export default class AuthController {
-  static async register(req: Request, res: Response) {
-    const user = await AuthService.register(req.body);
-    res.status(201).json({ user });
-  }
+const register = catchAsync(async(req: Request, res: Response)=>{
+    const result = await AuthService.register(req.body);
 
-  static async login(req: Request, res: Response) {
-    const { email, password } = req.body;
-    const token = await AuthService.login(email, password);
-    res.status(200).json({ token });
-  }
+    sendResponse(res,{
+        statusCode: StatusCodes.CREATED,
+        status: true,
+        message: "User registered successfully",
+        data: result
+    })
+})
+const login = catchAsync(async(req: Request, res: Response)=>{
+    const result = await AuthService.login(req.body);
+
+    sendResponse(res,{
+        statusCode: StatusCodes.ACCEPTED,
+        status: true,
+        message: "User logged in successfully",
+        token: result?.token,
+        data: result?.user
+    })
+})
+
+
+
+
+export const AuthControllers = {
+    register,
+    login
 }

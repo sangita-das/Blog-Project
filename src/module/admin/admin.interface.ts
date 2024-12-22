@@ -22,9 +22,13 @@ export interface IAdminApiResponse<T = any> {
 }
  */
 
+// import mongoose from "mongoose";
+
 
 
 export interface IAdmin {
+  // user : mongoose.Schema.Types.ObjectId
+  // blog : mongoose.Schema.Types.ObjectId
   id: string;
   role: string;
 }

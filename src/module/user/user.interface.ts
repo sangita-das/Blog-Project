@@ -1,3 +1,4 @@
+import { USER_ROLE } from "./user.constants"
 export interface IUser {
   name: string;
   email: string;
@@ -7,3 +8,5 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type TUserRole = keyof typeof USER_ROLE;

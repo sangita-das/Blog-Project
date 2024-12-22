@@ -1,30 +1,24 @@
-/* import express from 'express';
-import UserController from './user.controller';
-import verifyToken from '../../middlewares/verifyToken';
 
-const router = express.Router();
-
-router.get('/:id', verifyToken, UserController.getUserById);
-router.patch('/:id', verifyToken, UserController.updateUser); */
 
 
 import { Router } from 'express'
-import UserController from './user.controller';
+// import UserController from './user.controller';
 import { UserValidation } from './user.validation'
 import validateRequest from '../../middlewares/validateRequest'
 import auth from '../../middlewares/auth'
 import { USER_ROLE } from './user.constants'
+import { userController } from './user.controller'
 
-const router = Router()
+const userRouter = Router()
 
-router.post('/create-admin', validateRequest(UserValidation.userValidationSchema), UserController.createUser)
-router.get('/:userId', UserController.getSingleUser)
-router.put('/:userId', UserController.updateUser)
-router.delete('/:userId', UserController.deleteUser)
-router.get('/',auth(USER_ROLE.admin, USER_ROLE.user), userController.getUser)
+userRouter.post('/create-admin', validateRequest(UserValidation.userValidationSchema), userController.createUser)
+userRouter.get('/:userId', userController.getSingleUser)
+userRouter.put('/:userId', userController.updateUser)
+userRouter.delete('/:userId', userController.deleteUser)
+userRouter.get('/',auth(USER_ROLE.admin, USER_ROLE.user), userController.getUser)
 
 
 
-export default router;
+export default userRouter;
 
 

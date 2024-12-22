@@ -1,22 +1,40 @@
-import User from './user.model';
-import ApiError from '../../utils/ApiError';
-import { StatusCodes } from 'http-status-codes';
-import { IUser } from './user.interface';
+import { IUser } from './user.interface'
+import User from './user.model'
 
-const getUserById = async (id: string) => {
-  const user = await User.findById(id);
-  if (!user) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
-  }
-  return user;
-};
+const createUser = async (payload: IUser): Promise<IUser> => {
+  payload.role = 'admin';
+  const result = await User.create(payload)
 
-const updateUser = async (id: string, updateData: Partial<IUser>) => {
-  const user = await User.findByIdAndUpdate(id, updateData, { new: true });
-  if (!user) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
-  }
-  return user;
-};
+  return result
+}
 
-export default { getUserById, updateUser };
+const getUser = async () => {
+  const result = await User.find()
+  return result
+}
+
+const getSingleUser = async (id: string) => {
+  //   const result = await User.findOne({name:"habi jabi"})
+  const result = await User.findById(id)
+  return result
+}
+
+const updateUser = async (id: string, data: IUser) => {
+  const result = await User.findByIdAndUpdate(id, data, {
+    new: true,
+  })
+  return result
+}
+
+const deleteUser = async (id: string) => {
+  const result = await User.findByIdAndDelete(id)
+  return result
+}
+
+export const userService = {
+  createUser,
+  getUser,
+  getSingleUser,
+  updateUser,
+  deleteUser,
+}
